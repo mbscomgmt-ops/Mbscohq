@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>MBS 30‑Year Plan — Four Phases • One Vision</title>
+  <meta name="color-scheme" content="dark light">
+  <style>
+    :root{
+      --navy:#0b1d3a;
+      --navy-2:#132a52;
+      --bg:#0f203f;
+      --card:#112549;
+      --text:#f2f5f9;
+      --muted:#9fb3d1;
+      --accent:#f5b700;
+      --border:#2c3f6b;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 12px 36px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:linear-gradient(180deg,var(--bg),#0a1731);color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,rgba(11,29,58,.96),rgba(11,29,58,.7));
+      backdrop-filter: blur(10px);border-bottom:1px solid var(--border)}
+    .bar{display:flex;justify-content:space-between;align-items:center;padding:16px 18px}
+    .brand{font-weight:800;letter-spacing:.2px}
+    .brand .sub{display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:2px}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    .grid{display:grid;gap:16px}
+    @media(min-width:900px){.grid{grid-template-columns:1.2fr 1fr}}
+    .card{background:linear-gradient(180deg,rgba(17,37,73,.9),rgba(14,28,57,.9));
+      border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    h1{font-size:20px;margin:0}
+    h2{font-size:18px;margin:0 0 10px 0}
+    h3{font-size:16px;margin:12px 0 8px 0}
+    .muted{color:var(--muted)}
+    .btn{appearance:none;border:0;border-radius:12px;background:var(--navy-2);color:var(--text);padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px dashed var(--border);color:var(--muted)}
+    .btn.accent{background:var(--accent);color:#111}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .progress{height:10px;background:#0b1d3a;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg,#ffd24a,#f5b700)}
+    details{border:1px solid var(--border);border-radius:12px;padding:12px;background:rgba(255,255,255,.03)}
+    details+details{margin-top:10px}
+    summary{cursor:pointer;font-weight:700}
+    ul.tasks{list-style:none;padding:0;margin:10px 0 0 0;display:grid;gap:8px}
+    .task{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.02)}
+    .task input{width:18px;height:18px}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:12px}
+    .pill.ok{background:rgba(22,163,74,.15);color:#bff6cf;border-color:rgba(22,163,74,.35)}
+    .pill.warn{background:rgba(245,158,11,.15);color:#ffe7b8;border-color:rgba(245,158,11,.35)}
+    .pill.bad{background:rgba(239,68,68,.15);color:#ffd0d0;border-color:rgba(239,68,68,.35)}
+    .hint{font-size:13px;color:var(--muted)}
+    .kbd{display:inline-block;padding:3px 6px;border-radius:6px;border:1px solid var(--border);background:#0b1d3a;color:var(--muted);font-size:12px}
+    input[type=text]{width:100%;background:#0b1d3a;border:1px solid var(--border);color:var(--text);padding:10px;border-radius:10px}
+    .addrow{display:flex;gap:8px;margin-top:10px}
+    .addrow .btn{padding:10px 12px}
+    footer{padding:10px 18px;color:var(--muted);text-align:center}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <div>MBS 30‑Year Plan</div>
+        <div class="sub">Four Phases • One Vision</div>
+      </div>
+      <div class="row">
+        <button class="btn" id="exportBtn">Export</button>
+        <label class="btn ghost">
+          Import <input type="file" id="importFile" accept="application/json" style="display:none">
+        </label>
+        <button class="btn bad" id="resetBtn" style="background:var(--bad)">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="grid">
+      <div class="card">
+        <h2>Progress</h2>
+        <div class="hint">Check off tasks to see your progress across phases. Saved locally on your device (localStorage).</div>
+        <div style="margin-top:10px">
+          <div class="row" id="phasePills"></div>
+          <div class="progress" style="margin-top:10px"><i id="overallBar" style="width:0%"></i></div>
+          <div class="hint" id="overallHint" style="margin-top:6px">0% overall</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Milestones (Aspirational)</h2>
+        <div class="row" style="gap:8px">
+          <span class="pill">Revenue: $1M</span>
+          <span class="pill">Assets: $25M</span>
+          <span class="pill ok">Wealth Target: $100M+</span>
+          <span class="pill warn">Stretch: $1B (30‑yr horizon)</span>
+        </div>
+        <p class="hint" style="margin-top:8px">These are targets—adapt them to your actual goals.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Phases & Checklists</h2>
+
+      <!-- Phase containers -->
+      <div id="phases"></div>
+    </div>
+
+    <div class="card">
+      <h2>Notes</h2>
+      <p class="hint">Sectors: MBS Services, MBS Real Estate, MBS Kitchen, MBS Community. Use tasks below to reflect each sector’s steps.</p>
+      <ul>
+        <li>Deposit policy reference: <span class="kbd">20%</span> non‑refundable within <span class="kbd">24h</span> of service date.</li>
+        <li>Pricing anchors: Base $50/hr, ~20% markup; tech payout up to 80% (adjust to market).</li>
+        <li>Workflow: Quotes → Deposit → Schedule → Execute → Wrap‑up → Review → Referral.</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>© MBS • Built for GitHub Pages — drop this file in your repo and open it at <code>/30-year-plan.html</code>.</footer>
+
+  <script>
+    // -------- Data Model --------
+    const STORAGE_KEY = 'mbs_30y_plan_v1';
+    const DEFAULT = [
+      {
+        id: 'phase1',
+        title: 'Phase 1 — Foundation (Years 1–3)',
+        intro: 'Lock in operations, cashflow, and brand basics.',
+        tasks: [
+          {id:'p1_t1', text:'Set 20% deposit policy + links in messages/website', done:false},
+          {id:'p1_t2', text:'Standardize top 10 services (SOPs + checklists)', done:false},
+          {id:'p1_t3', text:'Daily routine & weekly wrap-up dashboards live', done:false},
+          {id:'p1_t4', text:'Hire 1–2 techs, define 80% payout structure', done:false},
+          {id:'p1_t5', text:'Close first $100k annual revenue', done:false},
+          {id:'p1_t6', text:'Launch MBS 2 SUCCESS content cadence (3x/week)', done:false}
+        ]
+      },
+      {
+        id: 'phase2',
+        title: 'Phase 2 — Systemize & Scale (Years 4–10)',
+        intro: 'Multi‑region operations, stable team, analytics‑driven growth.',
+        tasks: [
+          {id:'p2_t1', text:'Expand to second region; scheduling + availability board', done:false},
+          {id:'p2_t2', text:'Referral flywheel: post‑job review + referral incentives', done:false},
+          {id:'p2_t3', text:'Automated deposits/invoices; monthly KPI reporting', done:false},
+          {id:'p2_t4', text:'Invest initial real‑estate unit (cashflow positive)', done:false},
+          {id:'p2_t5', text:'Cross‑sell: Kitchen, Community services pilots', done:false},
+          {id:'p2_t6', text:'Hit $1M revenue run‑rate', done:false}
+        ]
+      },
+      {
+        id: 'phase3',
+        title: 'Phase 3 — Diversify & Build Assets (Years 11–20)',
+        intro: 'Multiple sectors and real‑estate portfolio compounding.',
+        tasks: [
+          {id:'p3_t1', text:'Franchise/licensing playbook for MBS Services', done:false},
+          {id:'p3_t2', text:'10+ real‑estate doors or equivalent RE holdings', done:false},
+          {id:'p3_t3', text:'Regional managers; owner focus on strategy/content', done:false},
+          {id:'p3_t4', text:'Kitchen brand in retail partnerships', done:false},
+          {id:'p3_t5', text:'Community arm: scholarships / local partnerships', done:false},
+          {id:'p3_t6', text:'Net worth milestone: $25M+', done:false}
+        ]
+      },
+      {
+        id: 'phase4',
+        title: 'Phase 4 — Legacy & Freedom (Years 21–30)',
+        intro: 'Passive income, philanthropy, and intergenerational planning.',
+        tasks: [
+          {id:'p4_t1', text:'Professionalized family office ops', done:false},
+          {id:'p4_t2', text:'Passive income overrides personal expenses', done:false},
+          {id:'p4_t3', text:'Succession plan + key roles documented', done:false},
+          {id:'p4_t4', text:'Philanthropy & community endowment', done:false},
+          {id:'p4_t5', text:'Net worth milestone: $100M+ (stretch: $1B)', done:false},
+          {id:'p4_t6', text:'50+ countries visited as brand ambassador', done:false}
+        ]
+      }
+    ];
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return DEFAULT;
+        const parsed = JSON.parse(raw);
+        // defensive: merge any new defaults with saved
+        return mergeDefaults(parsed, DEFAULT);
+      }catch(e){ return DEFAULT }
+    }
+
+    function mergeDefaults(saved, defaults){
+      const map = Object.fromEntries(saved.map(p=>[p.id,p]));
+      defaults.forEach(d=>{
+        if(!map[d.id]){ saved.push(d); return; }
+        const p = map[d.id];
+        const tmap = Object.fromEntries(p.tasks.map(t=>[t.id,t]));
+        d.tasks.forEach(dt=>{ if(!tmap[dt.id]) p.tasks.push(dt); });
+      });
+      return saved;
+    }
+
+    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(Phases)); }
+
+    // -------- Render --------
+    let Phases = load();
+
+    function percentDone(tasks){
+      if(!tasks.length) return 0;
+      const done = tasks.filter(t=>t.done).length;
+      return Math.round((done/tasks.length)*100);
+    }
+
+    function renderPills(){
+      const wrap = document.getElementById('phasePills'); wrap.innerHTML='';
+      Phases.forEach(p=>{
+        const pill = document.createElement('span');
+        pill.className='pill'; const pct = percentDone(p.tasks);
+        pill.textContent = p.title.replace(/ —.*/,'') + ' • ' + pct + '%';
+        if(pct===100) pill.classList.add('ok');
+        else if(pct>=50) pill.classList.add('warn');
+        wrap.appendChild(pill);
+      });
+    }
+
+    function renderOverall(){
+      const all = Phases.flatMap(p=>p.tasks);
+      const pct = percentDone(all);
+      document.getElementById('overallBar').style.width = pct + '%';
+      document.getElementById('overallHint').textContent = pct + '% overall';
+    }
+
+    function renderPhases(){
+      const host = document.getElementById('phases'); host.innerHTML='';
+      Phases.forEach(p=>{
+        const box = document.createElement('details'); box.open = true;
+        const sum = document.createElement('summary'); sum.textContent = p.title;
+        const intro = document.createElement('p'); intro.className='muted'; intro.textContent = p.intro;
+        const list = document.createElement('ul'); list.className='tasks';
+
+        p.tasks.forEach(t=> list.appendChild(renderTask(p, t)) );
+
+        // add row
+        const addRow = document.createElement('div'); addRow.className='addrow';
+        const input = document.createElement('input'); input.type='text'; input.placeholder='Add a custom task…';
+        const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Add';
+        btn.addEventListener('click', ()=>{
+          const text = input.value.trim(); if(!text) return;
+          const nt = {id: p.id + '_' + Date.now(), text, done:false};
+          p.tasks.push(nt); input.value=''; save(); render();
+        });
+        addRow.appendChild(input); addRow.appendChild(btn);
+
+        box.appendChild(sum);
+        box.appendChild(intro);
+        box.appendChild(list);
+        box.appendChild(addRow);
+        host.appendChild(box);
+      });
+    }
+
+    function renderTask(phase, task){
+      const li = document.createElement('li'); li.className='task';
+      const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = !!task.done;
+      const label = document.createElement('label'); label.textContent = task.text; label.style.flex='1';
+      const del = document.createElement('button'); del.className='btn ghost'; del.textContent='Delete';
+      cb.addEventListener('change', ()=>{ task.done = cb.checked; save(); render(); });
+      del.addEventListener('click', ()=>{
+        phase.tasks = phase.tasks.filter(t=>t.id!==task.id); save(); render();
+      });
+      li.appendChild(cb); li.appendChild(label); li.appendChild(del);
+      return li;
+    }
+
+    function render(){ renderPills(); renderOverall(); renderPhases(); }
+    render();
+
+    // -------- Export / Import / Reset --------
+    function download(filename, text, type='application/json'){
+      const blob = new Blob([text], {type});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download=filename; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    }
+
+    document.getElementById('exportBtn').addEventListener('click', ()=>{
+      download('mbs_30y_plan_export.json', JSON.stringify(Phases,null,2));
+    });
+
+    document.getElementById('importFile').addEventListener('change', e=>{
+      const f = e.target.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = ()=>{
+        try{
+          const data = JSON.parse(r.result);
+          if(Array.isArray(data)){ Phases = mergeDefaults(data, DEFAULT); save(); render(); }
+          else alert('Invalid file');
+        }catch(e){ alert('Invalid JSON'); }
+      };
+      r.readAsText(f);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      if(confirm('Reset all tasks and progress?')){
+        Phases = JSON.parse(JSON.stringify(DEFAULT)); save(); render();
+      }
+    });
+  </script>
+</body>
+</html>
